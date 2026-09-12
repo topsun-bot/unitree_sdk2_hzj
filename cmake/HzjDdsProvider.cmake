@@ -87,4 +87,6 @@ function(unitree_hzj_import_external_cyclone)
         $<BUILD_INTERFACE:${_cxx_inc}>
         $<INSTALL_INTERFACE:include>
         $<INSTALL_INTERFACE:include/ddscxx>)
+
+    set(UNITREE_HZJ_DDS_LIBDIR "${_libdir}" PARENT_SCOPE)
 endfunction()

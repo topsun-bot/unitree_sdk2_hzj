@@ -28,7 +28,10 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cmake g++ build-essential
       - name: CMake configure (bundled)
         run: |
-          cmake -B build -DUNITREE_HZJ_DDS_PROVIDER=bundled -DBUILD_EXAMPLES=OFF -DBUILD_HZJ_SMOKE=ON
+          cmake -B build \
+            -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ \
+            -DUNITREE_HZJ_DDS_PROVIDER=bundled \
+            -DBUILD_EXAMPLES=OFF -DBUILD_HZJ_SMOKE=ON
       - name: Build smoke (best effort)
         run: |
           if cmake --build build --target hzj_channel_init_smoke; then

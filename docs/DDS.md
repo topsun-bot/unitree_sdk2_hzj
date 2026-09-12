@@ -126,6 +126,10 @@ After any edit that touches DDS, CMake, or `thirdparty/`:
    cmake --build build --target hzj_channel_init_smoke
    ./build/bin/hzj_channel_init_smoke
    ```
+   Default-path binaries get a `DT_RPATH` to `thirdparty/lib/<arch>` so
+   `libddscxx.so.0` can load sibling `libddsc.so.0` (the prebuilt C++ `.so`
+   has `RUNPATH $ORIGIN/../lib`, which is the *install* layout, not the
+   copied `lib/<arch>` layout).
    Expects `provider BundledCyclone010`, `cyclone 0.10.2`,
    `drop_in_for_ros2_hzj false`, `robot_wire_interop_proven false`.
    Does **not** call `Init()` (no live domain).

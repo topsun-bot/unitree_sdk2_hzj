@@ -43,6 +43,8 @@ if(UNITREE_HZJ_DDS_PROVIDER STREQUAL "bundled")
     # Same imported ddsc / ddscxx targets as topsun-bot/unitree_sdk2 @ 9754cd15.
     add_subdirectory(thirdparty)
     set(UNITREE_HZJ_PROVIDER_DEFINE UNITREE_HZJ_DDS_PROVIDER_BUNDLED)
+    set(UNITREE_HZJ_DDS_LIBDIR
+        "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/lib/${CMAKE_SYSTEM_PROCESSOR}")
 elseif(UNITREE_HZJ_DDS_PROVIDER STREQUAL "external")
     unitree_hzj_import_external_cyclone()
     set(UNITREE_HZJ_PROVIDER_DEFINE UNITREE_HZJ_DDS_PROVIDER_EXTERNAL)
@@ -70,6 +72,14 @@ target_include_directories(unitree_sdk2 INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 target_compile_definitions(unitree_sdk2 INTERFACE ${UNITREE_HZJ_PROVIDER_DEFINE})
+if(UNITREE_HZJ_DDS_LIBDIR)
+    # Bundled libddscxx has RUNPATH $ORIGIN/../lib (install layout), not
+    # thirdparty/lib/<arch>. Use DT_RPATH (legacy, inherited) so the copied
+    # side-by-side .so files resolve at runtime without LD_LIBRARY_PATH.
+    target_link_options(unitree_sdk2 INTERFACE
+        "-Wl,--disable-new-dtags"
+        "-Wl,-rpath,${UNITREE_HZJ_DDS_LIBDIR}")
+endif()
 
 # HZJ alias: same link line plus an explicit name for this product.
 add_library(unitree_sdk2_hzj INTERFACE)

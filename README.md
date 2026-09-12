@@ -96,6 +96,8 @@ sudo apt-get install -y cmake g++ build-essential
 cmake -B build
 cmake --build build
 ./build/bin/hzj_channel_init_smoke
+# If a consumer binary was not built with this repo's BUILD_RPATH:
+#   export LD_LIBRARY_PATH="$PWD/thirdparty/lib/$(uname -m):$LD_LIBRARY_PATH"
 ```
 
 CMake refuses to configure if `thirdparty/include/dds/version.h` is not
