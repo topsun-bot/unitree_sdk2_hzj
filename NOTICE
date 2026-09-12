@@ -1,0 +1,30 @@
+unitree_sdk2_hzj
+================
+
+HZJ rewrite of the Unitree SDK2 DDS integration path.
+
+Upstream snapshot
+-----------------
+Original ChannelFactory, dds_wrapper, IDL headers, CMake imported-library
+layout, prebuilt `libunitree_sdk2.a`, and bundled CycloneDDS 0.10.2 binaries
+were copied from:
+
+  https://github.com/topsun-bot/unitree_sdk2
+  commit 9754cd153af3da471b0fe5f3aa535e426fb11db3
+  (fork of unitreerobotics/unitree_sdk2; 70 commits ahead of tag 2.0.2)
+
+That tree remains the tracking fork. This repository is an independent
+topsun-bot product — it is not a PR into topsun_dimos and does not overwrite
+topsun-bot/unitree_sdk2.
+
+Companion
+---------
+https://github.com/topsun-bot/ros2_hzj v0.1.0 @ 218903b vendors CycloneDDS
+11.0.1. That is not a drop-in replacement for the 0.10.2 `.so` files here.
+
+Licenses
+--------
+- Unitree SDK: LICENSE (BSD 3-Clause, HangZhou YuShu / Unitree Robotics)
+- Eclipse CycloneDDS / cyclonedds-cxx: licenses/eclipse-cyclonedds/
+- Eclipse iceoryx: licenses/eclipse-iceoryx/
+- RapidJSON (Tencent): licenses/Tencent/rapidjson/

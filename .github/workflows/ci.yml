@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  structure:
+    name: structure (0.10.2 assert + no 11.0.1 in thirdparty)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert bundled CycloneDDS is 0.10.2
+        run: bash scripts/assert_bundled_cyclone_0102.sh
+      - name: Guard thirdparty against Cyclone 11.0.1 replacement
+        run: bash scripts/ci_structure_check.sh
+
+  configure-default:
+    name: configure default BundledCyclone010
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cmake / g++
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cmake g++ build-essential
+      - name: CMake configure (bundled)
+        run: |
+          cmake -B build -DUNITREE_HZJ_DDS_PROVIDER=bundled -DBUILD_EXAMPLES=OFF -DBUILD_HZJ_SMOKE=ON
+      - name: Build smoke (best effort)
+        run: |
+          if cmake --build build --target hzj_channel_init_smoke; then
+            ./build/bin/hzj_channel_init_smoke
+          else
+            echo "::warning::Prebuilt libunitree_sdk2.a / libddsc.so may not link on this runner (upstream target is Ubuntu 20.04 gcc 9.4). Structure job remains the merge gate."
+          fi
