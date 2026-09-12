@@ -64,10 +64,13 @@ endif()
 
 find_package(Threads REQUIRED)
 
+add_subdirectory(src/unitree_hzj)
+
 add_library(unitree_sdk2 STATIC IMPORTED GLOBAL)
 set_target_properties(unitree_sdk2 PROPERTIES
     IMPORTED_LOCATION ${UNITREE_SDK_LIB})
-target_link_libraries(unitree_sdk2 INTERFACE ddsc ddscxx Threads::Threads)
+# Open HZJ provider (ChannelFactoryInitialize + cyclone_link) plus the closed .a.
+target_link_libraries(unitree_sdk2 INTERFACE unitree_hzj_dds ddsc ddscxx Threads::Threads)
 target_include_directories(unitree_sdk2 INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
@@ -95,6 +98,9 @@ endif()
 
 install(DIRECTORY include/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(TARGETS unitree_hzj_dds
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES ${UNITREE_SDK_LIB}
     DESTINATION ${CMAKE_INSTALL_LIBDIR})

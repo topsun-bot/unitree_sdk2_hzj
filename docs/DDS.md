@@ -18,38 +18,62 @@ tree. Do not treat a green CI structure job as robot-ready.
 
 No Agnocast. No zenoh.
 
-## Flow: ChannelFactory → dds_wrapper → Cyclone
+## Flow: ChannelFactoryInitialize → provider → closed Init → Cyclone
 
 ```
 application
-  ChannelFactoryInitialize(domainId, nic)     // HZJ compat name
-  or ChannelFactory::Instance()->Init(...)    // canonical C++
+  ChannelFactoryInitialize(domainId, nic)     // compiled in libunitree_hzj_dds
         │
         ▼
-  ChannelFactory  (include/unitree/robot/channel/channel_factory.hpp)
-        │  holds DdsFactoryModelPtr
-        │  CreateSendChannel / CreateRecvChannel
+  unitree_hzj::dds::initialize_channel_factory
+        │  src/unitree_hzj/channel.cpp
+        │  consults compiled-in provider (cyclone_link.cpp + dds/version.h)
+        │  bundled: require linked DDS_VERSION == 0.10.2
         ▼
-  DdsFactoryModel (include/unitree/common/dds/dds_factory_model.hpp)
-        │  Init(domainId, config)  — implemented in libunitree_sdk2.a
-        │  CreateTopicChannel → SetWriter / SetReader
+  ChannelFactory::Init(...)                   // CLOSED — libunitree_sdk2.a
+        │  channel_factory.cpp.o
+        │  no --wrap, no fake hook
         ▼
-  DdsTopicChannel → DdsParticipant / DdsPublisher / DdsSubscriber
-                    DdsTopic / DdsWriter / DdsReader
-        │           (include/unitree/common/dds/dds_entity.hpp)
-        │           #include <dds/dds.hpp>
+  DdsFactoryModel::Init / DdsParticipant      // CLOSED — same archive
+        │  dds_factory_model.cpp.o / dds_entity.cpp.o
+        │  CreateTopicChannel / SetWriter / SetReader are header templates
         ▼
   CycloneDDS C++ API  (org::eclipse::cyclonedds)
         │
-        ├─ BundledCyclone010 (DEFAULT)
+        ├─ BundledCyclone010 (DEFAULT compile + link)
         │    thirdparty/include + thirdparty/lib/<arch>/libddsc.so
-        │    thirdparty/lib/<arch>/libddscxx.so
+        │    cyclone_link.cpp compiled against those headers
         │    version.h DDS_VERSION "0.10.2"
         │
-        └─ ExternalCyclone (OPT-IN)
+        └─ ExternalCyclone (OPT-IN compile + link)
              UNITREE_HZJ_DDS_ROOT/{include,lib}
+             cyclone_link.cpp compiled against that prefix
              ABI vs 0.10.2 UNPROVEN; robot wire UNPROVEN
 ```
+
+`ChannelFactory::Instance()->Init(...)` still exists and still jumps
+straight into the archive. Prefer `ChannelFactoryInitialize` so the
+compiled provider runs first.
+
+## What cannot be rewritten (closed static lib)
+
+`nm -C lib/x86_64/libunitree_sdk2.a` shows these **defined** in the archive:
+
+| Object | Symbols |
+|--------|---------|
+| `channel_factory.cpp.o` | `ChannelFactory::Init` (all overloads), `Release`, ctor |
+| `dds_factory_model.cpp.o` | `DdsFactoryModel::Init` / ctor / dtor |
+| `dds_entity.cpp.o` | `DdsParticipant`, `DdsPublisher`, `DdsSubscriber` ctors |
+
+There is no Unitree source for those objects in this repo. Replacing them
+would mean either omitting the `.a` (breaks every robot client) or
+`--wrap` / object extraction (a fake hook). HZJ does **not** do that.
+
+Open and rewritten instead:
+
+- `ChannelFactoryInitialize` — compiled, goes through `provider.hpp`
+- `src/unitree_hzj/cyclone_link.cpp` — real compile-time Cyclone include/link
+- `dds_wrapper` robot helpers — default topics are `unitree_hzj::topics::*`
 
 `dds_wrapper` (`include/unitree/dds_wrapper/`) sits on top of
 `ChannelPublisher` / `ChannelSubscriber`. Robot helpers default to the
@@ -130,9 +154,16 @@ After any edit that touches DDS, CMake, or `thirdparty/`:
    `libddscxx.so.0` can load sibling `libddsc.so.0` (the prebuilt C++ `.so`
    has `RUNPATH $ORIGIN/../lib`, which is the *install* layout, not the
    copied `lib/<arch>` layout).
-   Expects `provider BundledCyclone010`, `cyclone 0.10.2`,
-   `drop_in_for_ros2_hzj false`, `robot_wire_interop_proven false`.
+   Expects `provider BundledCyclone010`, `linked_cyclone 0.10.2`,
+   `init_impl closed_static_lib`, `drop_in_for_ros2_hzj false`.
    Does **not** call `Init()` (no live domain).
+   Prove the compile switch (same 0.10.2 `.so`, different define):
+   ```bash
+   cmake -B build-ext -DUNITREE_HZJ_DDS_PROVIDER=external \
+     -DUNITREE_HZJ_DDS_ROOT="$PWD/thirdparty"
+   cmake --build build-ext --target hzj_channel_init_smoke
+   ./build-ext/bin/hzj_channel_init_smoke   # provider ExternalCyclone
+   ```
 
 5. **Original example (optional)**
    ```bash

@@ -27,7 +27,7 @@ namespace publisher
 class LowState : public RealTimePublisher<unitree_hg::msg::dds_::LowState_>
 {
 public:
-    LowState(std::string topic = "rt/lowstate") : RealTimePublisher<MsgType>(topic) 
+    LowState(std::string topic = unitree_hzj::topics::kLowState) : RealTimePublisher<MsgType>(topic) 
     {
     }
     std::shared_ptr<unitree::common::UnitreeJoystick> joystick = nullptr;
@@ -45,7 +45,7 @@ private:
 class LowCmd : public RealTimePublisher<unitree_hg::msg::dds_::LowCmd_>
 {
 public:
-    LowCmd(std::string topic = "rt/lowcmd") : RealTimePublisher<MsgType>(topic) 
+    LowCmd(std::string topic = unitree_hzj::topics::kLowCmd) : RealTimePublisher<MsgType>(topic) 
     {
     }
 
@@ -71,7 +71,7 @@ private:
 class ArmSdk : public RealTimePublisher<unitree_hg::msg::dds_::LowCmd_>
 {
 public:
-    ArmSdk(std::string topic = "rt/arm_sdk") : RealTimePublisher<MsgType>(topic) {}
+    ArmSdk(std::string topic = unitree_hzj::topics::kArmSdk) : RealTimePublisher<MsgType>(topic) {}
 
     // Enable arm sdk
     void weight(float coe)

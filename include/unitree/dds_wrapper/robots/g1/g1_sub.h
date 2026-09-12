@@ -29,7 +29,7 @@ class LowCmd : public SubscriptionBase<unitree_hg::msg::dds_::LowCmd_>
 public:
     using SharedPtr = std::shared_ptr<LowCmd>;
 
-    LowCmd(std::string topic = "rt/lowcmd") : SubscriptionBase<MsgType>(topic) {}
+    LowCmd(std::string topic = unitree_hzj::topics::kLowCmd) : SubscriptionBase<MsgType>(topic) {}
 
 };
 
@@ -38,7 +38,7 @@ class ArmSdk : public SubscriptionBase<unitree_hg::msg::dds_::LowCmd_>
 public:
     using SharedPtr = std::shared_ptr<LowCmd>;
 
-    ArmSdk(std::string topic = "rt/arm_sdk") : SubscriptionBase<MsgType>(topic) {}
+    ArmSdk(std::string topic = unitree_hzj::topics::kArmSdk) : SubscriptionBase<MsgType>(topic) {}
 
 };
 class LowState : public SubscriptionBase<unitree_hg::msg::dds_::LowState_>
@@ -46,7 +46,7 @@ class LowState : public SubscriptionBase<unitree_hg::msg::dds_::LowState_>
 public:
     using SharedPtr = std::shared_ptr<LowState>;
 
-    LowState(std::string topic = "rt/lowstate") : SubscriptionBase<MsgType>(topic) {}
+    LowState(std::string topic = unitree_hzj::topics::kLowState) : SubscriptionBase<MsgType>(topic) {}
 
     void update()
     {
@@ -86,7 +86,7 @@ class InspireHandState : public SubscriptionBase<unitree_go::msg::dds_::MotorSta
 public:
     using SharedPtr = std::shared_ptr<InspireHandState>;
 
-    InspireHandState(std::string topic = "rt/inspire/state") : SubscriptionBase<MsgType>(topic) {}
+    InspireHandState(std::string topic = unitree_hzj::topics::kInspireHandState) : SubscriptionBase<MsgType>(topic) {}
 };
 
 class Dex3LeftHandState : public SubscriptionBase<unitree_hg::msg::dds_::HandState_>
@@ -94,7 +94,7 @@ class Dex3LeftHandState : public SubscriptionBase<unitree_hg::msg::dds_::HandSta
 public:
     using SharedPtr = std::shared_ptr<Dex3LeftHandState>;
 
-    Dex3LeftHandState(std::string topic = "rt/dex3/left/state") : SubscriptionBase<MsgType>(topic) {}
+    Dex3LeftHandState(std::string topic = unitree_hzj::topics::kDex3LeftHandState) : SubscriptionBase<MsgType>(topic) {}
 };
 
 class Dex3RightHandState : public SubscriptionBase<unitree_hg::msg::dds_::HandState_>
@@ -102,7 +102,7 @@ class Dex3RightHandState : public SubscriptionBase<unitree_hg::msg::dds_::HandSt
 public:
     using SharedPtr = std::shared_ptr<Dex3RightHandState>;
 
-    Dex3RightHandState(std::string topic = "rt/dex3/right/state") : SubscriptionBase<MsgType>(topic) {}
+    Dex3RightHandState(std::string topic = unitree_hzj::topics::kDex3RightHandState) : SubscriptionBase<MsgType>(topic) {}
 };
 
 } // namespace subscription

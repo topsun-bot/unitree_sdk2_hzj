@@ -12,6 +12,11 @@ and it does **not** overwrite [topsun-bot/unitree_sdk2](https://github.com/topsu
 - **0.1.0 first tree** — real source, not a seed README. Default DDS provider
   is still the copied CycloneDDS **0.10.2** (`thirdparty/`,
   `DDS_VERSION "0.10.2"`, `libddsc.so` / `libddscxx.so`).
+- **Compiled provider** — `ChannelFactoryInitialize` is implemented in
+  `src/unitree_hzj/` and goes through `unitree_hzj::dds` before calling
+  closed `ChannelFactory::Init` in `libunitree_sdk2.a`. That Init is not
+  wrapped. `UNITREE_HZJ_DDS_PROVIDER=external` is a real compile/link
+  switch (`cyclone_link.cpp` + selected include/lib), not headers-only.
 - **Provider switch** — `UNITREE_HZJ_DDS_PROVIDER=bundled|external`. External
   is opt-in via `UNITREE_HZJ_DDS_ROOT`. It is **not** a drop-in for
   ros2_hzj's Cyclone 11.0.1.
@@ -157,10 +162,11 @@ HZJ umbrella (provider + topic constants):
 ```
 include/unitree/           mirrored upstream (ChannelFactory, dds_wrapper, IDL)
 include/unitree_hzj/       rewritten DDS integration (providers, topics)
+src/unitree_hzj/           compiled provider + ChannelFactoryInitialize
 thirdparty/                copied Cyclone 0.10.2 — do not replace with 11.0.1
-lib/<arch>/                copied libunitree_sdk2.a
+lib/<arch>/                copied libunitree_sdk2.a (closed Init)
 hzj/smoke/                 provider / ChannelFactory link smoke
-docs/DDS.md                flow, validation points, ABI traps
+docs/DDS.md                flow, closed-lib limits, ABI traps
 scripts/                   version assert + 11.0.1 structure guard
 ```
 

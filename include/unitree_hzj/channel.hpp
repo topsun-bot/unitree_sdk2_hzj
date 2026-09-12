@@ -1,6 +1,7 @@
 // Copyright (c) 2026 topsun-bot.
-// HZJ channel surface: original ChannelFactory APIs plus the
-// ChannelFactoryInitialize name DimOS / unitree_sdk2py-style code expects.
+// HZJ channel surface. ChannelFactoryInitialize is compiled in
+// src/unitree_hzj/channel.cpp and goes through the DDS provider before
+// calling closed ChannelFactory::Init in libunitree_sdk2.a.
 #pragma once
 
 #include <unitree/robot/channel/channel_factory.hpp>

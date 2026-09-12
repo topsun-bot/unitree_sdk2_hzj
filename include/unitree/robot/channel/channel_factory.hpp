@@ -56,17 +56,10 @@ private:
     common::Mutex mMutex;
 };
 
-// HZJ compatibility: name used by DimOS / unitree_sdk2py-style call sites.
-// Canonical C++ remains ChannelFactory::Instance()->Init(...).
-inline void ChannelFactoryInitialize(int32_t domainId, const std::string& networkInterface = "")
-{
-    ChannelFactory::Instance()->Init(domainId, networkInterface);
-}
-
-inline void ChannelFactoryInitialize(const std::string& configFileName)
-{
-    ChannelFactory::Instance()->Init(configFileName);
-}
+// Implemented in src/unitree_hzj/channel.cpp (compiled provider).
+// Calls ChannelFactory::Init inside libunitree_sdk2.a — that Init is closed.
+void ChannelFactoryInitialize(int32_t domainId, const std::string& networkInterface = "");
+void ChannelFactoryInitialize(const std::string& configFileName);
 
 }
 }

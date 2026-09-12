@@ -17,7 +17,7 @@ namespace publisher
 class ArmSdk : public RealTimePublisher<unitree_hg::msg::dds_::LowCmd_>
 {
 public:
-    ArmSdk(std::string topic = "rt/arm_sdk") : RealTimePublisher<MsgType>(topic) 
+    ArmSdk(std::string topic = unitree_hzj::topics::kArmSdk) : RealTimePublisher<MsgType>(topic) 
     {
     }
 

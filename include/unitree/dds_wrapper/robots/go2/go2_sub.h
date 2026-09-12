@@ -38,7 +38,7 @@ class LowState : public SubscriptionBase<unitree_go::msg::dds_::LowState_>
 public:
   using SharedPtr = std::shared_ptr<LowState>;
 
-  LowState(std::string topic = "rt/lowstate") : SubscriptionBase<MsgType>(topic) {}
+  LowState(std::string topic = unitree_hzj::topics::kLowState) : SubscriptionBase<MsgType>(topic) {}
 
   void update()
   {
@@ -79,7 +79,7 @@ class LowCmd : public SubscriptionBase<unitree_go::msg::dds_::LowCmd_>
 public:
   using SharedPtr = std::shared_ptr<LowCmd>;
 
-  LowCmd(std::string topic = "rt/lowcmd") : SubscriptionBase<MsgType>(topic) {}
+  LowCmd(std::string topic = unitree_hzj::topics::kLowCmd) : SubscriptionBase<MsgType>(topic) {}
 };
 
 class SportModeState : public SubscriptionBase<unitree_go::msg::dds_::SportModeState_>
@@ -87,7 +87,7 @@ class SportModeState : public SubscriptionBase<unitree_go::msg::dds_::SportModeS
 public:
   using SharedPtr = std::shared_ptr<SportModeState>;
 
-  SportModeState(std::string topic = "rt/sportmodestate") : SubscriptionBase<MsgType>(topic) {}
+  SportModeState(std::string topic = unitree_hzj::topics::kSportModeState) : SubscriptionBase<MsgType>(topic) {}
 
   const uint32_t gaitType() const { return msg_.gait_type(); }
   

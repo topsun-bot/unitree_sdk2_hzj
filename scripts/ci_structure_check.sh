@@ -21,6 +21,18 @@ fail() {
   || fail "IDL headers missing"
 [[ -f "${ROOT}/include/unitree_hzj/dds/provider.hpp" ]] \
   || fail "HZJ provider header missing"
+[[ -f "${ROOT}/src/unitree_hzj/channel.cpp" ]] \
+  || fail "compiled ChannelFactoryInitialize (src/unitree_hzj/channel.cpp) missing"
+[[ -f "${ROOT}/src/unitree_hzj/cyclone_link.cpp" ]] \
+  || fail "compiled cyclone_link.cpp missing"
+grep -q '#include <dds/version.h>' "${ROOT}/src/unitree_hzj/cyclone_link.cpp" \
+  || fail "cyclone_link.cpp must include dds/version.h (compile-time provider switch)"
+grep -q 'initialize_channel_factory' "${ROOT}/src/unitree_hzj/channel.cpp" \
+  || fail "channel.cpp must implement initialize_channel_factory"
+if grep -n 'inline void ChannelFactoryInitialize' \
+    "${ROOT}/include/unitree/robot/channel/channel_factory.hpp" >/dev/null; then
+  fail "ChannelFactoryInitialize must not be an inline Init() wrapper; it is compiled in src/unitree_hzj/channel.cpp"
+fi
 [[ -f "${ROOT}/lib/x86_64/libunitree_sdk2.a" ]] \
   || fail "prebuilt libunitree_sdk2.a (x86_64) missing"
 [[ -f "${ROOT}/licenses/eclipse-cyclonedds/cyclonedds/LICENSE" ]] \

@@ -34,7 +34,7 @@ namespace publisher
 class LowCmd : public RealTimePublisher<unitree_go::msg::dds_::LowCmd_>
 {
 public:
-  LowCmd(std::string topic = "rt/lowcmd")
+  LowCmd(std::string topic = unitree_hzj::topics::kLowCmd)
   : RealTimePublisher<MsgType>(topic) 
   {
     msg_.head() = {0xFE, 0xEF};
@@ -56,7 +56,7 @@ private:
 class LowState : public RealTimePublisher<unitree_go::msg::dds_::LowState_>
 {
 public:
-  LowState(std::string topic = "rt/lowstate")
+  LowState(std::string topic = unitree_hzj::topics::kLowState)
   : RealTimePublisher<MsgType>(topic) 
   {}
 
@@ -75,7 +75,7 @@ private:
 class SportModeState : public RealTimePublisher<unitree_go::msg::dds_::SportModeState_>
 {
 public:
-  SportModeState(std::string topic = "rt/sportmodestate")
+  SportModeState(std::string topic = unitree_hzj::topics::kSportModeState)
   : RealTimePublisher<MsgType>(topic) 
   {
   }
@@ -84,7 +84,7 @@ public:
 class WirelessController : public RealTimePublisher<unitree_go::msg::dds_::WirelessController_>
 {
 public:
-  WirelessController(std::string topic = "rt/wirelesscontroller")
+  WirelessController(std::string topic = unitree_hzj::topics::kWirelessController)
   : RealTimePublisher<MsgType>(topic) 
   {
   }

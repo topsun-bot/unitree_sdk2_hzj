@@ -35,7 +35,37 @@ jobs:
       - name: Build smoke (best effort)
         run: |
           if cmake --build build --target hzj_channel_init_smoke; then
-            ./build/bin/hzj_channel_init_smoke
+            ./build/bin/hzj_channel_init_smoke | tee /tmp/hzj-smoke.out
+            grep -q 'provider BundledCyclone010' /tmp/hzj-smoke.out
+            grep -q 'linked_cyclone 0.10.2' /tmp/hzj-smoke.out
+            grep -q 'init_impl closed_static_lib' /tmp/hzj-smoke.out
           else
             echo "::warning::Prebuilt libunitree_sdk2.a / libddsc.so may not link on this runner (upstream target is Ubuntu 20.04 gcc 9.4). Structure job remains the merge gate."
+          fi
+
+  configure-external-same-so:
+    name: configure ExternalCyclone (same 0.10.2 .so, compile switch)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cmake / g++
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cmake g++ build-essential
+      - name: CMake configure (external root = copied thirdparty)
+        run: |
+          cmake -B build-ext \
+            -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ \
+            -DUNITREE_HZJ_DDS_PROVIDER=external \
+            -DUNITREE_HZJ_DDS_ROOT="${GITHUB_WORKSPACE}/thirdparty" \
+            -DBUILD_EXAMPLES=OFF -DBUILD_HZJ_SMOKE=ON
+      - name: Build smoke (best effort)
+        run: |
+          if cmake --build build-ext --target hzj_channel_init_smoke; then
+            ./build-ext/bin/hzj_channel_init_smoke | tee /tmp/hzj-ext.out
+            grep -q 'provider ExternalCyclone' /tmp/hzj-ext.out
+            grep -q 'linked_provider ExternalCyclone' /tmp/hzj-ext.out
+            echo "NOTE: this job reuses thirdparty 0.10.2 as UNITREE_HZJ_DDS_ROOT to prove the compile switch. It does not copy ros2_hzj 11.0.1. Robot wire interop remains UNPROVEN."
+          else
+            echo "::warning::External-same-so link failed on this runner. Structure job remains the merge gate."
           fi

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <unitree/robot/channel/channel_publisher.hpp>
+#include <unitree_hzj/dds/topics.hpp>
 #include <atomic>
 #include <thread>
 #include <memory>

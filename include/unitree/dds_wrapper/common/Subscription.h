@@ -4,6 +4,7 @@
 #pragma once
 
 #include <unitree/robot/channel/channel_subscriber.hpp>
+#include <unitree_hzj/dds/topics.hpp>
 #include <mutex>
 #include <thread>
 
