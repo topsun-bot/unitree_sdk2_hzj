@@ -1,0 +1,2 @@
+add_executable(hzj_channel_init_smoke channel_init_smoke.cpp)
+target_link_libraries(hzj_channel_init_smoke PRIVATE unitree_sdk2_hzj)
